@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>BluePy ETDT Report</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #ffffff;
+      --fg: #0f172a;            /* slate-900-ish */
+      --muted: #475569;         /* slate-600 */
+      --card: #ffffff;
+      --card-border: #e5e7eb;   /* gray-200 */
+      --code-bg: #f6f8fa;
+
+      --pill-high-bg: #ffe5e5;
+      --pill-high-fg: #a40000;
+      --pill-med-bg: #fff5e5;
+      --pill-med-fg: #8a4b00;
+      --pill-low-bg: #e5f7ff;
+      --pill-low-fg: #004d73;
+    }
+    .dark {
+      --bg: #0b1220;
+      --fg: #e5e7eb;
+      --muted: #a3adc2;
+      --card: #111827;          /* gray-900 */
+      --card-border: #1f2937;   /* gray-800 */
+      --code-bg: #0f172a;
+
+      --pill-high-bg: #3a0d0d;
+      --pill-high-fg: #ff9a9a;
+      --pill-med-bg: #382311;
+      --pill-med-fg: #ffce9a;
+      --pill-low-bg: #0d2530;
+      --pill-low-fg: #8ad3ff;
+    }
+
+    html, body { height: 100%; }
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
+      margin: 0;
+    }
+
+    /* Header */
+    .header {
+      position: sticky; top: 0; z-index: 10;
+      backdrop-filter: saturate(140%) blur(6px);
+      background: color-mix(in oklab, var(--bg) 85%, transparent);
+      border-bottom: 1px solid var(--card-border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 22px;
+    }
+    .title { font-weight: 800; letter-spacing: .2px; font-size: 22px; }
+
+    /* Toggle */
+    .toggle {
+      font: inherit;
+      color: var(--fg);
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 999px;
+      padding: 6px 10px;
+      cursor: pointer;
+    }
+
+    /* Container */
+    .wrap { max-width: 1000px; margin: 22px auto; padding: 0 22px; }
+
+    /* Cards / Pills */
+    .card {
+      border: 1px solid var(--card-border);
+      background: var(--card);
+      border-radius: 12px;
+      padding: 16px 18px;
+      margin: 14px 0;
+    }
+    .pill { display:inline-block; padding:2px 8px; border-radius:999px; font-size:12px; }
+    .high   { background: var(--pill-high-bg); color: var(--pill-high-fg); }
+    .medium { background: var(--pill-med-bg);  color: var(--pill-med-fg); }
+    .low    { background: var(--pill-low-bg);  color: var(--pill-low-fg); }
+
+    /* Typography */
+    h1, h2, h3 { margin: 0 0 10px 0; }
+    h1 { font-size: 28px; margin-bottom: 4px; }
+    h2 { font-size: 20px; }
+    h3 { font-size: 18px; display:flex; align-items:center; gap:10px; }
+    p { color: var(--fg); }
+    .muted { color: var(--muted); }
+    ul.meta { margin: 0.5rem 0 0 1.1rem; }
+
+    /* Code/Evidence */
+    code, pre {
+      background: var(--code-bg);
+      padding: 2px 4px;
+      border-radius: 6px;
+      color: var(--fg);
+    }
+    details summary { cursor: pointer; }
+
+    /* Footer */
+    .footer { color: var(--muted); font-size: 12px; text-align: center; margin: 18px 0 40px; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="title">BluePy ETDT — Triage Report</div>
+    <button id="themeToggle" class="toggle" aria-label="Toggle theme">🌙 Dark</button>
+  </div>
+
+  <div class="wrap">
+    <!-- Scan Summary -->
+    <div class="card">
+      <h2>Scan Summary</h2>
+      <ul class="meta">
+        <li><strong>When:</strong> {{ meta.timestamp or "N/A" }}</li>
+        <li><strong>Host:</strong> {{ meta.hostname or "N/A" }}</li>
+        <li><strong>OS:</strong> {{ meta.os or "N/A" }} — Python {{ meta.python or "N/A" }}</li>
+        <li><strong>Uptime:</strong> {{ meta.uptime or "N/A" }} (boot {{ meta.boot_time or "N/A" }})</li>
+        <li><strong>Processes analyzed:</strong> {{ meta.process_count or 0 }}</li>
+        <li><strong>Network connections inspected:</strong> {{ meta.network_count or 0 }}</li>
+        <li><strong>Persistence items checked:</strong> {{ meta.persistence_count or 0 }}</li>
+        <li><strong>Rules triggered:</strong>
+          {{ (summary.high + summary.medium + summary.low) }}
+          &nbsp;(
+          <span class="pill high">High: {{ summary.high }}</span>
+          <span class="pill medium">Medium: {{ summary.medium }}</span>
+          <span class="pill low">Low: {{ summary.low }}</span>
+          )
+        </li>
+      </ul>
+    </div>
+
+    {% for f in findings %}
+    <div class="card">
+      <h3>
+        {{ f.id }} — {{ f.name }}
+        <span class="pill {{ f.severity|lower }}">{{ f.severity }}</span>
+      </h3>
+      <p><strong>ATT&CK:</strong> {{ f.attack.id }} ({{ f.attack.name }} — {{ f.attack.tactic }})</p>
+      <p class="muted">{{ f.explain }}</p>
+
+      <details>
+        <summary>Evidence ({{ f.evidence|length }})</summary>
+        <pre>{{ f.evidence | tojson(indent=2) }}</pre>
+      </details>
+
+      {% if f.next_steps %}
+      <p><strong>Next steps:</strong></p>
+      <ul>
+        {% for step in f.next_steps %}
+          <li>{{ step }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+    </div>
+    {% endfor %}
+
+    <div class="footer">
+      Generated by BluePy ETDT • {{ meta.timestamp or "" }}
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const key = "bluepy-theme";
+      const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const saved = localStorage.getItem(key);
+      const isDark = saved ? saved === "dark" : prefersDark;
+
+      function applyTheme(dark) {
+        document.documentElement.classList.toggle("dark", dark);
+        const btn = document.getElementById("themeToggle");
+        if (btn) btn.textContent = dark ? "☀️ Light" : "🌙 Dark";
+        localStorage.setItem(key, dark ? "dark" : "light");
+      }
+
+      applyTheme(isDark);
+
+      document.getElementById("themeToggle")?.addEventListener("click", () => {
+        const nowDark = !document.documentElement.classList.contains("dark");
+        applyTheme(nowDark);
+      });
+    })();
+  </script>
+</body>
+</html>

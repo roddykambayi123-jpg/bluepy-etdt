@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+*.db
+
+# Virtual environment
+.venv/
+env/
+venv/
+
+# macOS files
+.DS_Store
+
+# Reports and generated outputs
+reports/
+bluepy-etdt-reports/
+
+# IDE and editor settings
+.vscode/
+.idea/

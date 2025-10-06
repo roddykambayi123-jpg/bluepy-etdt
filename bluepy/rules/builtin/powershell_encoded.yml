@@ -1,0 +1,19 @@
+id: PS_ENC_CMD
+name: PowerShell / Encoded Command Indicator
+severity: high
+attack: { technique: T1059, tactic: Execution }
+match:
+  any:
+    - target: process.tree
+      where:
+        # child can be powershell/pwsh or even python/bash used to launch payloads
+        child_regex: '(?i)(powershell|pwsh|python|bash|sh|zsh)(\.exe)?'
+        # either explicit -enc / -encodedcommand or a long Base64-looking token
+        cmdline_regex: '(?i)(-enc(odedcommand)?\s+[A-Za-z0-9/+]+=*)|([A-Za-z0-9/+]{20,}={0,2})'
+explain: >
+  Command lines using encoded payloads (e.g., PowerShell -EncodedCommand or long Base64 strings)
+  are commonly used to evade naive detections.
+next_steps:
+  - "Decode the suspicious blob; review what it executes or downloads."
+  - "Correlate with parent process (email client/Office/doc macros) and user intent."
+  - "If unapproved, isolate the host and preserve artifacts."

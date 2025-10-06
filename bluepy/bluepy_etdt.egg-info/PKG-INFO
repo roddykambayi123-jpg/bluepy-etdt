@@ -1,0 +1,43 @@
+Metadata-Version: 2.4
+Name: bluepy-etdt
+Version: 0.1.0
+Summary: Endpoint Threat Detection & Triage (ETDT) — Python rules engine + HTML reports
+Author: Your Name
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: psutil>=5.9
+Requires-Dist: PyYAML>=6.0
+Requires-Dist: pydantic>=2.7
+Requires-Dist: Jinja2>=3.1
+Requires-Dist: click>=8.1
+Dynamic: license-file
+
+
+# BluePy: Endpoint Threat Detection & Triage (ETDT)
+
+A lightweight, cross‑platform Python toolkit that collects endpoint telemetry,
+applies a YAML rules engine mapped to MITRE ATT&CK, and generates HTML/JSON triage reports.
+
+## Quick start
+```bash
+python -m venv .venv && source .venv/bin/activate  # Windows: .venv\Scripts\activate
+pip install -e .
+bluepy scan --all --report html
+```
+
+## Demo
+```bash
+bluepy scan --demo --report html
+```
+This triggers safe, benign findings so you can screenshot the HTML report for your portfolio.
+
+## Features (MVP)
+- Process, network, and persistence snapshots (read‑only)
+- YAML rules (severity + ATT&CK mapping)
+- HTML & JSON reports
+- Clean CLI, unit tests, CI
+
+> **Ethics**: No malware here. Demo scenarios are benign and self‑contained.
+
+MIT License.

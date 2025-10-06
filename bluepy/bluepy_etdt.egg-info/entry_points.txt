@@ -1,0 +1,2 @@
+[console_scripts]
+bluepy = bluepy.cli:main

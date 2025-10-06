@@ -1,0 +1,15 @@
+id: SUSP_PARENT_CHILD
+name: Suspicious Parent-Child Chain
+severity: high
+attack: { technique: T1204, tactic: Execution }
+match:
+  any:
+    - target: process.tree
+      where:
+        parent_regex: '(?i)(winword|excel|powerpnt|outlook|python)\.exe'
+        child_regex: '(?i)(powershell|cmd|wscript|mshta|rundll32|bash|sh)'
+explain: >
+  Office (or demo via Python) spawning a scripting/LOLBin is a common indicator of macro abuse or user execution leading to code execution.
+next_steps:
+  - "Identify the parent document/script and its origin (email, download)."
+  - "Validate with the user; if unknown, contain the host and collect artifacts."

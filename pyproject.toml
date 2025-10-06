@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bluepy-etdt"
+version = "0.1.0"
+description = "Endpoint Threat Detection & Triage (ETDT) — Python rules engine + HTML reports"
+authors = [{ name = "Your Name" }]
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+  "psutil>=5.9",
+  "PyYAML>=6.0",
+  "pydantic>=2.8.0,<3",
+  "Jinja2>=3.1",
+  "click>=8.1"
+]
+
+[project.scripts]
+bluepy = "bluepy.cli:main"
+
+# ---- Choose ONE packaging style. This one is simplest:
+[tool.setuptools]
+packages = ["bluepy"]
+
+# (Do NOT include any 'include' key here.)

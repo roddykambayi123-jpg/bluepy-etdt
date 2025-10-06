@@ -1,0 +1,17 @@
+
+id: EXEC_FROM_TEMP
+name: Execution From Temp/Downloads
+severity: medium
+attack: { technique: T1059, tactic: Execution }
+match:
+  any:
+    - target: process.exec_path
+      where:
+        path_contains: "temp"
+    - target: process.exec_path
+      where:
+        path_contains: "downloads"
+explain: >
+  Executables launched from user-writable folders (Temp/Downloads) are higher risk.
+next_steps:
+  - "Check file reputation and signer; relocate to a controlled path if benign."
