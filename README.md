@@ -23,6 +23,11 @@ This triggers safe, benign findings so you can screenshot the HTML report for yo
 - HTML & JSON reports
 - Clean CLI, unit tests, CI
 
+
+## 📊 Example Report
+<img width="1034" height="884" alt="BluePy ETDT Report" src="https://github.com/user-attachments/assets/d12d4607-7c2c-43eb-b3fe-4c9f80a32e8b" />
+
+
 > **Ethics**: No malware here. Demo scenarios are benign and self‑contained.
 
 MIT License.
